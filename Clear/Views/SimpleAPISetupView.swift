@@ -89,7 +89,7 @@ struct SimpleAPISetupView: View {
             }
         }
         .padding(30)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 25))
+        .background(.clear, in: RoundedRectangle(cornerRadius: 25))
         .padding(.horizontal, 20)
     }
     

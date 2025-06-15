@@ -105,8 +105,10 @@ struct TaskCard: View {
                             }
                             
                             // 添加觸覺反饋
+                            #if !os(visionOS)
                             let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
                             impactFeedback.impactOccurred()
+                            #endif
                         }
                         .buttonStyle(TaskActionButtonStyle(color: task.color, isCompleted: isCompleted))
                         .disabled(isCompleted)

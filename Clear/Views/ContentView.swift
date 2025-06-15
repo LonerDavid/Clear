@@ -11,22 +11,46 @@ struct ContentView: View {
     @StateObject private var appState = AppState()
     
     var body: some View {
+        #if os(visionOS)
+        TabView {
+            UpdatedLandingPageView()
+                .tabItem {
+                    Label("主頁", systemImage: "house")
+                }
+                .environmentObject(appState)
+            
+            EmotionSelectionView()
+                .tabItem {
+                    Label("療癒小語", systemImage: "heart.fill")
+                }
+                .environmentObject(appState)
+            
+//            ImmersiveSpaceView()
+//                .tabItem {
+//                    Label("沉浸", systemImage: "sparkles")
+//                }
+//                .environmentObject(appState)
+            
+            DailyTasksView()
+                .tabItem {
+                    Label("每日任務", systemImage: "heart.text.square")
+                }
+                .environmentObject(appState)
+            
+            EmotionReportView()
+                .tabItem {
+                    Label("情緒報告", systemImage: "list.clipboard.fill")
+                }
+                .environmentObject(appState)
+                .frame(minWidth: 250, maxWidth: 500, minHeight: 200, maxHeight: 400)
+            
+        }
+        .preferredColorScheme(.dark)
+        .environmentObject(appState)
+        
+        #else
         NavigationStack {
             ZStack {
-                // 背景圖片 - 添加 allowsHitTesting(false) 讓點擊事件穿透
-//                Image("Immersive")
-//                    .resizable()
-//                    .aspectRatio(contentMode: .fill)
-//                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                    .clipped()
-//                    .ignoresSafeArea()
-//                    .allowsHitTesting(false) // 🔑
-                
-                // 可選：在圖片上加一層半透明遮罩以提高文字可讀性
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false) // 🔑 遮罩層也不攔截點擊事件
-                
                 // 主要界面導航
                 Group {
                     switch appState.currentView {
@@ -48,8 +72,9 @@ struct ContentView: View {
                 ))
             }
         }
-        .environmentObject(appState)
         .preferredColorScheme(.dark)
+        .environmentObject(appState)
+        #endif
     }
 }
 

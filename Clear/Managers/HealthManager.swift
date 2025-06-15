@@ -242,6 +242,12 @@ class HealthManager: ObservableObject {
 
         return recommendations
     }
+    
+    private func formatTimeLabel(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
+    }
 }
 
 // MARK: - 壓力模型
@@ -285,6 +291,19 @@ enum StressCategory: String, CaseIterable {
     }
 }
 
+struct StressDataPoint: Identifiable {
+    let id = UUID()
+    let timeLabel: String // e.g., "Mon", "14:00"
+    let value: Double
+    let type: StressType
+}
+
+enum StressType: String, CaseIterable {
+    case acute = "Acute"
+    case chronic = "Chronic"
+}
+
+
 extension PHAuthorizationStatus {
     var description: String {
         switch self {
@@ -297,3 +316,67 @@ extension PHAuthorizationStatus {
         }
     }
 }
+
+extension HealthManager {
+    // Chronic stress: past 7 days
+    func getChronicStressTrend(completion: @escaping ([StressDataPoint]) -> Void) {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else { return }
+        let calendar = Calendar.current
+        let now = Date()
+        let startDate = calendar.startOfDay(for: calendar.date(byAdding: .day, value: -6, to: now)!)
+        let endDate = now
+        let interval = DateComponents(day: 1)
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: [])
+
+        let statsQuery = HKStatisticsCollectionQuery(quantityType: type, quantitySamplePredicate: predicate, options: .discreteAverage, anchorDate: startDate, intervalComponents: interval)
+        statsQuery.initialResultsHandler = { _, results, _ in
+            var dataPoints: [StressDataPoint] = []
+            results?.enumerateStatistics(from: startDate, to: endDate) { stats, _ in
+                if let avgHRV = stats.averageQuantity()?.doubleValue(for: .secondUnit(with: .milli)) {
+                    let stress = max(0, min(100, (60 - avgHRV) * 2))
+                    let dayLabel = DateFormatter.localizedString(from: stats.startDate, dateStyle: .short, timeStyle: .none)
+                    dataPoints.append(StressDataPoint(timeLabel: dayLabel, value: stress, type: .chronic))
+                }
+            }
+            DispatchQueue.main.async {
+                completion(dataPoints)
+            }
+        }
+        healthStore.execute(statsQuery)
+    }
+
+    // Acute stress: past 7 hours
+    func getAcuteStressTrend(completion: @escaping ([StressDataPoint]) -> Void) {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else {
+            completion([])
+            return
+        }
+        
+        let endDate = Date()
+        let startDate = endDate.addingTimeInterval(-7 * 3600) // 7 hours ago
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: [])
+        
+        let query = HKSampleQuery(sampleType: type, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)]) { _, samples, error in
+            guard let samples = samples as? [HKQuantitySample], error == nil else {
+                DispatchQueue.main.async {
+                    completion([])
+                }
+                return
+            }
+            
+            let dataPoints = samples.map { sample -> StressDataPoint in
+                let hrv = sample.quantity.doubleValue(for: .secondUnit(with: .milli))
+                let stressLevel = max(0, min(100, (60 - hrv) * 2))
+                let timeLabel = self.formatTimeLabel(sample.startDate)
+                return StressDataPoint(timeLabel: timeLabel, value: stressLevel, type: .acute)
+            }
+            
+            DispatchQueue.main.async {
+                completion(dataPoints)
+            }
+        }
+        
+        healthStore.execute(query)
+    }
+}
+

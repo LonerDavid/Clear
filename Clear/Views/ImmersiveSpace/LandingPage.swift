@@ -36,6 +36,11 @@ struct UpdatedLandingPageView: View {
     @State private var showAPISetup = false
 
     var body: some View {
+        #if os(visionOS)
+        VStack {
+            Text("Landing Page")
+        }
+        #else
         GeometryReader { geometry in
             ZStack {
                 Color.clear
@@ -177,6 +182,7 @@ struct UpdatedLandingPageView: View {
                 }
             }
         }
+        #endif
     }
 
     private func toggleChatInterface() {
@@ -243,18 +249,21 @@ struct SimpleVoiceWaveView: View {
     @State private var waveHeights: [CGFloat] = Array(repeating: 15, count: 5)
     
     var body: some View {
-        HStack(spacing: 6) {
-            ForEach(0..<5, id: \.self) { index in
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(.white.opacity(isAIActive ? 1.0 : 0.8))
-                    .frame(width: 6, height: waveHeights[index])
-                    .animation(
-                        .easeInOut(duration: Double.random(in: 0.3...0.8))
-                        .repeatForever()
-                        .delay(Double(index) * 0.1),
-                        value: waveHeights[index]
-                    )
+        HStack {
+            HStack(spacing: 6) {
+                ForEach(0..<5, id: \.self) { index in
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(.white.opacity(isAIActive ? 1.0 : 0.8))
+                        .frame(width: 6, height: waveHeights[index])
+                        .animation(
+                            .easeInOut(duration: Double.random(in: 0.3...0.8))
+                            .repeatForever()
+                            .delay(Double(index) * 0.1),
+                            value: waveHeights[index]
+                        )
+                }
             }
+            .frame(height: 30)
         }
         .padding(.horizontal, 25)
         .padding(.vertical, 15)

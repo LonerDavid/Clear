@@ -12,7 +12,7 @@ class AppState: ObservableObject {
     
     enum ViewType {
         case landing, emotionSelection, immersiveSpace, emotionReport, dailyTasks
-    }
+    }   
     
     enum EmotionType: String, CaseIterable {
         case happy = "滿足"

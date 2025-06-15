@@ -8,38 +8,33 @@ struct StressInfoCard: View {
     let percentage: Int
     let date: String
     let color: Color
+    let type: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack {
             HStack {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(title)
-                        .font(.headline)
-                        .foregroundStyle(.secondary)
-                    
-                    Text("\(percentage)%")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.white)
-                }
-                
+                Text(title)
+                    .font(.title3)
+                    .foregroundStyle(.primary)
                 Spacer()
-                
-                VStack(alignment: .trailing, spacing: 5) {
+                HStack {
                     Text(date)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    
-                    // 趨勢圖
-                    StressTrendChart(color: color, percentage: percentage)
+                        .font(.title3)
+                        .foregroundStyle(.primary)
+                    Image(systemName: "chevron.right")
                 }
             }
-            
-            // 進度條
-            ProgressView(value: Double(percentage), total: 100)
-                .progressViewStyle(LinearProgressViewStyle(tint: color))
-                .scaleEffect(y: 2)
+            HStack {
+                Text("\(percentage)%")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.primary)
+                
+//                StressTrendChart(color: color, percentage: percentage)
+                StressLineChartView(color: color, type: type)
+            }
         }
+        #if !os(visionOS)
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 15)
@@ -49,5 +44,6 @@ struct StressInfoCard: View {
                         .stroke(color.opacity(0.3), lineWidth: 1)
                 )
         )
+        #endif
     }
 }
