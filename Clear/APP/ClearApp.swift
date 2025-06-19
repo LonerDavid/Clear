@@ -18,7 +18,7 @@ struct ClearApp: App {
         }
         .windowResizability(.contentMinSize)
         .defaultSize(width: 900, height: 450)
-        
+        #if os(visionOS)
         ImmersiveSpace(id: appModel.immersiveSpaceID) {
             ImmersiveView()
                 .environment(appModel)
@@ -42,5 +42,6 @@ struct ClearApp: App {
                 }
         }
         .immersionStyle(selection: .constant(.full), in: .full)
+        #endif
     }
 }

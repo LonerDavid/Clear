@@ -4,7 +4,7 @@
 //
 //  Created by Haruaki on 2025/6/19.
 //
-
+#if os(visionOS)
 import SwiftUI
 import RealityKit
 import RealityKitContent
@@ -32,3 +32,4 @@ struct ImmersiveView: View {
     ImmersiveView()
         .environment(AppModel())
 }
+#endif

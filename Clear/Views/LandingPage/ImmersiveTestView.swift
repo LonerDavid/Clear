@@ -10,7 +10,9 @@ import SwiftUI
 struct ImmersiveTestView: View {
     var body: some View {
         VStack {
+            #if os(visionOS)
             ToggleImmersiveSpaceButton()
+            #endif
         }
     }
 }

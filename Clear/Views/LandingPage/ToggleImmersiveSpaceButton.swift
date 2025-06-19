@@ -12,7 +12,7 @@
 //
 //  Created by Haruaki on 2025/6/18.
 //
-
+#if os(visionOS)
 import SwiftUI
 
 struct ToggleImmersiveSpaceButton: View {
@@ -64,3 +64,4 @@ struct ToggleImmersiveSpaceButton: View {
         .fontWeight(.semibold)
     }
 }
+#endif

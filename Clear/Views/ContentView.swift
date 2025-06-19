@@ -81,7 +81,7 @@ struct ContentView: View {
                     case .emotionReport:
                         EmotionReportView()
                     case .dailyTasks:
-                        DailyTasksView()
+                        DailyTaskView()
                     }
                 }
                 .transition(.asymmetric(
