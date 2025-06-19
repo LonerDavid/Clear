@@ -13,17 +13,27 @@ struct ContentView: View {
     var body: some View {
         #if os(visionOS)
         TabView {
+            
+            ImmersiveTestView()
+                .tabItem {
+                    Label("測試用", systemImage: "hammer.fill")
+                }
+                .environmentObject(appState)
+                .frame(width: 800, height: 600)
+            
             UpdatedLandingPageView()
                 .tabItem {
                     Label("主頁", systemImage: "house")
                 }
                 .environmentObject(appState)
-            
+                .frame(width: 800, height: 600)
+                
             EmotionSelectionView()
                 .tabItem {
                     Label("療癒小語", systemImage: "heart.fill")
                 }
                 .environmentObject(appState)
+                .frame(width: 600, height: 500)
             
 //            ImmersiveSpaceView()
 //                .tabItem {
@@ -31,18 +41,26 @@ struct ContentView: View {
 //                }
 //                .environmentObject(appState)
             
-            DailyTasksView()
+            DailyTaskView()
                 .tabItem {
                     Label("每日任務", systemImage: "heart.text.square")
                 }
                 .environmentObject(appState)
+                .frame(width: 1000, height: 800)
             
             EmotionReportView()
                 .tabItem {
                     Label("情緒報告", systemImage: "list.clipboard.fill")
                 }
                 .environmentObject(appState)
-                .frame(minWidth: 250, maxWidth: 500, minHeight: 200, maxHeight: 400)
+                .frame(width: 800, height: 600)
+            
+//            ImmersiveTestView()
+//                .tabItem {
+//                    Label("測試用", systemImage: "hammer.fill")
+//                }
+//                .environmentObject(appState)
+//                .frame(width: 800, height: 600)
             
         }
         .preferredColorScheme(.dark)
@@ -82,65 +100,6 @@ struct ContentView: View {
     ContentView()
 }
 
-// MARK: - MemoryPhotosView.swift
-struct MemoryPhotosView: View {
-    let photos: [String]
-    let screenSize: CGSize
-    @State private var showPhotos = false
-    
-    var body: some View {
-        ZStack {
-            ForEach(Array(photos.enumerated()), id: \.offset) { index, photo in
-                MemoryPhotoCard(photo: photo, index: index, screenSize: screenSize)
-                    .opacity(showPhotos ? 1 : 0)
-                    .scaleEffect(showPhotos ? 1 : 0.3)
-                    .animation(
-                        .spring(response: 0.8, dampingFraction: 0.6)
-                        .delay(Double(index) * 0.2),
-                        value: showPhotos
-                    )
-            }
-        }
-        .onAppear {
-            withAnimation {
-                showPhotos = true
-            }
-        }
-    }
-}
-
-// MARK: - MemoryPhotoCard.swift
-struct MemoryPhotoCard: View {
-    let photo: String
-    let index: Int
-    let screenSize: CGSize
-    @State private var rotation: Double = 0
-    
-    var body: some View {
-        Text(photo)
-            .font(.system(size: 50))
-            .padding(20)
-            .background(
-                RoundedRectangle(cornerRadius: 15)
-                    .fill(.ultraThinMaterial)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 15)
-                            .stroke(.white.opacity(0.3), lineWidth: 1)
-                    )
-            )
-            .rotationEffect(.degrees(rotation))
-            .position(
-                x: CGFloat.random(in: 60...screenSize.width-60),
-                y: CGFloat.random(in: 150...screenSize.height-150)
-            )
-            .onAppear {
-                rotation = Double.random(in: -15...15)
-                withAnimation(.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
-                    rotation += Double.random(in: -5...5)
-                }
-            }
-    }
-}
 
 // MARK: - SuggestionCard.swift
 struct SuggestionCard: View {
@@ -181,80 +140,6 @@ struct SuggestionCard: View {
     }
 }
 
-// MARK: - DailyTasksView.swift
-struct DailyTasksView: View {
-    @EnvironmentObject var appState: AppState
-    @State private var showTasks = false
-    
-    private let tasks = [
-        DailyTask(
-            title: "冥想",
-            subtitle: "短期舒壓任務",
-            duration: "3分鐘",
-            character: "🧘‍♀️",
-            color: .green,
-            description: "透過正念冥想，讓心靈回到平靜狀態"
-        ),
-        DailyTask(
-            title: "時空膠囊",
-            subtitle: "長期任務卡",
-            duration: "記錄美好",
-            character: "📝",
-            color: .orange,
-            description: "記錄今天的美好時刻，為未來的自己留下溫暖"
-        ),
-        DailyTask(
-            title: "聽音樂",
-            subtitle: "快速任務卡",
-            duration: "30秒",
-            character: "🎧",
-            color: .yellow,
-            description: "聆聽療癒音樂，讓音符撫慰你的心靈"
-        )
-    ]
-    
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 30) {
-                Text("每日任務卡")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.white)
-                    .opacity(showTasks ? 1 : 0)
-                    .offset(y: showTasks ? 0 : -20)
-                    .animation(.spring(response: 0.8).delay(0.2), value: showTasks)
-                
-                LazyVGrid(columns: [GridItem(.flexible())], spacing: 20) {
-                    ForEach(Array(tasks.enumerated()), id: \.element.id) { index, task in
-                        TaskCard(task: task)
-                            .opacity(showTasks ? 1 : 0)
-                            .scaleEffect(showTasks ? 1 : 0.8)
-                            .animation(
-                                .spring(response: 0.8, dampingFraction: 0.7)
-                                .delay(Double(index) * 0.2 + 0.4),
-                                value: showTasks
-                            )
-                    }
-                }
-                
-                Button("返回主頁") {
-                    withAnimation(.spring(response: 0.6)) {
-                        appState.currentView = .landing
-                    }
-                }
-                .buttonStyle(ClearButtonStyle(isPrimary: false))
-                .opacity(showTasks ? 1 : 0)
-                .animation(.spring(response: 0.8).delay(1.2), value: showTasks)
-            }
-            .padding(20)
-        }
-        .onAppear {
-            withAnimation {
-                showTasks = true
-            }
-        }
-    }
-}
 
 // MARK: - 健康相關 UI 組件
 struct HealthMetricCard: View {

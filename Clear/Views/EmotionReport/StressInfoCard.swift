@@ -29,7 +29,7 @@ struct StressInfoCard: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundStyle(.primary)
-                
+                Spacer()
 //                StressTrendChart(color: color, percentage: percentage)
                 StressLineChartView(color: color, type: type)
             }

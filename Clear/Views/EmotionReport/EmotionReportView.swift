@@ -11,14 +11,15 @@ struct EmotionReportView: View {
     
     var body: some View {
 #if os(visionOS)
-        VStack {
+        VStack(spacing: 10) {
             Text("今日情緒報告")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundStyle(.primary)
+                .padding(.vertical, 10)
             HStack {
                 ClearCharacterView(
-                    size: 200,
+                    size: 300,
                     expression: appState.clearCharacter.expression,
                     color: appState.clearCharacter.color
                 )
@@ -31,38 +32,46 @@ struct EmotionReportView: View {
                             title: "短期壓力",
                             percentage: Int(healthManager.stressAnalysis.acuteStressLevel),
                             date: "即時",
-                            color: .orange,
+                            color: .gray,
                             type: "acute"
                         )
                         .onTapGesture {
                             showAcuteExplanation = true
                         }
+                        .padding()
+                        .background(Material.thin)
+                        .cornerRadius(20)
                         
                         StressInfoCard(
                             title: "長期壓力",
                             percentage: Int(healthManager.stressAnalysis.chronicStressLevel),
                             date: "本週",
-                            color: .purple,
+                            color: .gray,
                             type: "chronic"
                         )
                         .onTapGesture {
                             showChronicExplanation = true
                         }
+                        .padding()
+                        .background(Material.thin)
+                        .cornerRadius(20)
                     }
+                    .padding()
                     .animation(.spring(response: 0.8).delay(0.8), value: showContent)
                 } else {
                     VStack {
                         VStack(spacing: 10) {
                             Image(systemName: "applewatch.watchface")
-                                .font(.system(size: 30))
+                                .font(.system(size: 60))
                                 .foregroundStyle(.gray)
                             
                             Text("未連接健康數據")
-                                .font(.caption)
+                                .font(.callout)
                                 .foregroundStyle(.gray)
                         }
                         .padding(30)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+                        .frame(minWidth:100  ,maxWidth: 200, minHeight: 80, maxHeight: 160)
+                        
                         
                         Button("連接 Apple Watch 健康數據") {
                             healthManager.requestHealthKitPermission()
@@ -70,8 +79,10 @@ struct EmotionReportView: View {
                         .background(.ultraThinMaterial, in: Capsule())
                         .buttonStyle(.borderless)
                     }
+//                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
                 }
             }
+            .padding(.horizontal, 20)
         }
         
 #else

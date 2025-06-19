@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C8826F1C2E03F02800E3F770 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = C8826F1B2E03F02800E3F770 /* RealityKitContent */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		39E607BE2DED587100BB104D /* Clear.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clear.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C860A8D62E033262009C7D9F /* Clear.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clear.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C8826F062E03ED0700E3F770 /* RealityKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealityKit.framework; path = System/Library/Frameworks/RealityKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8826F1C2E03F02800E3F770 /* RealityKitContent in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,16 +52,17 @@
 			isa = PBXGroup;
 			children = (
 				39E607C02DED587100BB104D /* Clear */,
-				39E607BF2DED587100BB104D /* Products */,
+				C860A8D62E033262009C7D9F /* Clear.app */,
+				C8826F052E03ED0700E3F770 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
-		39E607BF2DED587100BB104D /* Products */ = {
+		C8826F052E03ED0700E3F770 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				39E607BE2DED587100BB104D /* Clear.app */,
+				C8826F062E03ED0700E3F770 /* RealityKit.framework */,
 			);
-			name = Products;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -78,9 +85,10 @@
 			);
 			name = Clear;
 			packageProductDependencies = (
+				C8826F1B2E03F02800E3F770 /* RealityKitContent */,
 			);
 			productName = Clear;
-			productReference = 39E607BE2DED587100BB104D /* Clear.app */;
+			productReference = C860A8D62E033262009C7D9F /* Clear.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -93,7 +101,7 @@
 				KnownAssetTags = (
 					New,
 				);
-				LastSwiftUpdateCheck = 1630;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					39E607BD2DED587100BB104D = {
@@ -110,8 +118,11 @@
 			);
 			mainGroup = 39E607B52DED587100BB104D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C8826F1A2E03F02800E3F770 /* XCLocalSwiftPackageReference "Packages/RealityKitContent" */,
+			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 39E607BF2DED587100BB104D /* Products */;
+			productRefGroup = 39E607B52DED587100BB104D;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -366,6 +377,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		C8826F1A2E03F02800E3F770 /* XCLocalSwiftPackageReference "Packages/RealityKitContent" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/RealityKitContent;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C8826F1B2E03F02800E3F770 /* RealityKitContent */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RealityKitContent;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 39E607B62DED587100BB104D /* Project object */;
 }

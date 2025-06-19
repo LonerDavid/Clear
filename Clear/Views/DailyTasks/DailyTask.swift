@@ -1,4 +1,3 @@
-
 import SwiftUI
 import Photos
 import PhotosUI
@@ -12,6 +11,8 @@ struct DailyTask: Identifiable {
     let character: String
     let color: Color
     let description: String
+    let clearname: String
+    let backgroundcolor: Color
 }
 
 // MARK: - TaskCard.swift
@@ -22,6 +23,43 @@ struct TaskCard: View {
     @State private var showDetail = false
     
     var body: some View {
+        #if os(visionOS)
+        VStack {
+            VStack(spacing: 10) {
+                HStack {
+                    Text(task.subtitle)
+                        .font(.subheadline)
+                    Spacer()
+                    Text(task.duration)
+                        .font(.caption)
+                }
+
+                HStack {
+                    Text(task.title)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                    Spacer()
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 20)
+
+            
+            
+            Spacer()
+            Image(task.clearname)
+                .resizable()
+                .scaledToFit()
+        }
+        .frame(width: 250, height: 350)
+        .background{
+            task.backgroundcolor
+                .opacity(0.2)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+        }
+        .padding(.horizontal, 5)
+        
+        #else
         VStack(spacing: 0) {
             // 主要任務卡片
             HStack(spacing: 20) {
@@ -146,6 +184,7 @@ struct TaskCard: View {
                 isPressed = false
             }
         }
+        #endif
     }
     
     private func scheduleNotification(for task: DailyTask) {
