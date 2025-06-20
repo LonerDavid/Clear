@@ -4,7 +4,7 @@ import PhotosUI
 
 struct EmotionReportView: View {
     @EnvironmentObject var appState: AppState
-    @StateObject private var healthManager = HealthManager()
+    @EnvironmentObject var healthManager: HealthManager
     @State private var showContent = false
     @State private var showAcuteExplanation = false
     @State private var showChronicExplanation = false

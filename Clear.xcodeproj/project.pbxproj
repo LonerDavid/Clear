@@ -16,7 +16,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		39E607DA2DED872300BB104D /* Exceptions for "Clear" folder in "Clear" target */ = {
+		C81D64212E04ABD70033A42D /* Exceptions for "Clear" folder in "Clear" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -26,10 +26,10 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		39E607C02DED587100BB104D /* Clear */ = {
+		C81D63FD2E04ABD70033A42D /* Clear */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				39E607DA2DED872300BB104D /* Exceptions for "Clear" folder in "Clear" target */,
+				C81D64212E04ABD70033A42D /* Exceptions for "Clear" folder in "Clear" target */,
 			);
 			path = Clear;
 			sourceTree = "<group>";
@@ -51,9 +51,9 @@
 		39E607B52DED587100BB104D = {
 			isa = PBXGroup;
 			children = (
-				39E607C02DED587100BB104D /* Clear */,
 				C860A8D62E033262009C7D9F /* Clear.app */,
 				C8826F052E03ED0700E3F770 /* Frameworks */,
+				C81D63FD2E04ABD70033A42D /* Clear */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,7 +81,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				39E607C02DED587100BB104D /* Clear */,
+				C81D63FD2E04ABD70033A42D /* Clear */,
 			);
 			name = Clear;
 			packageProductDependencies = (

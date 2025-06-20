@@ -1,30 +1,11 @@
 import SwiftUI
-import AVFoundation
+#if os(visionOS)
+import RealityKit
+import RealityKitContent
+#endif
 
 // ✅ 背景音樂播放管理器
-class AudioPlayerManager {
-    static let shared = AudioPlayerManager()
-    private var player: AVAudioPlayer?
 
-    func playBackgroundSound(named name: String, fileType: String = "mp3", loops: Bool = true) {
-        if let url = Bundle.main.url(forResource: name, withExtension: fileType) {
-            do {
-                player = try AVAudioPlayer(contentsOf: url)
-                player?.numberOfLoops = loops ? -1 : 0
-                player?.volume = 0.5
-                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-                try AVAudioSession.sharedInstance().setActive(true)
-                player?.play()
-            } catch {
-                print("❌ 播放音樂失敗：\(error)")
-            }
-        }
-    }
-
-    func stop() {
-        player?.stop()
-    }
-}
 
 // ✅ 主畫面
 struct UpdatedLandingPageView: View {
@@ -35,31 +16,43 @@ struct UpdatedLandingPageView: View {
     @State private var showChatInterface = false
     @State private var showAPISetup = false
     @State private var showVoiceWave = false
+    @State private var inputText = ""
 
     var body: some View {
         #if os(visionOS)
-        VStack {
+        VStack(spacing: 24) {
+            DraggableYellowHeartView()
             Text("嗨，今天的你感覺如何？")
                 .font(.largeTitle)
-            Button {
-                showVoiceWave = true
-                isAnimating = true
-            } label: {
-                if showVoiceWave {
-                    SimpleVoiceWaveView(isAnimating: $isAnimating, isAIActive: chatManager.isProcessing)
-                        .opacity(showWelcomeText ? 1 : 0)
-                        .animation(.spring(response: 0.8).delay(0.8), value: showWelcomeText)
-                        .onTapGesture {
-                            if chatManager.hasValidAPIKey {
-                                toggleChatInterface()
-                            } else {
-                                showAPISetup = true
-                            }
-                        }
-                } else {
-                    Image(systemName: "microphone.fill")
+            
+            HStack(spacing: 12) {
+                TextField("輸入訊息...", text: $inputText, onCommit: {
+                    sendTextMessage()
+                })
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(
+                    Capsule()
+                        .fill(.thinMaterial)
+                )
+                .hoverEffect(.highlight)
+                .frame(maxWidth: 300)
+                
+                Button(action: {
+                    if chatManager.isListening {
+                        chatManager.stopListening()
+                    } else {
+                        chatManager.startListening()
+                    }
+                }) {
+                    Image(systemName: chatManager.isListening ? "mic.fill" : "mic")
+                        .font(.title2)
+                        .foregroundStyle(chatManager.isListening ? .red : .primary)
                 }
+                .buttonStyle(.borderless)
             }
+            .padding(.horizontal)
+            
             HStack {
                 Button {
                     //說不出口
@@ -79,6 +72,9 @@ struct UpdatedLandingPageView: View {
                 }
                 .buttonStyle(.borderless)
             }
+        }
+        .onAppear {
+            AudioPlayerManager.shared.playBackgroundSound(named: "lake")
         }
         #else
         GeometryReader { geometry in
@@ -280,6 +276,12 @@ struct UpdatedLandingPageView: View {
         appState.clearCharacter.color = getCharacterColor()
         appState.clearCharacter.expression = getCharacterExpression()
     }
+
+    private func sendTextMessage() {
+        guard !inputText.isEmpty else { return }
+        chatManager.sendTextMessage(inputText)
+        inputText = ""
+    }
 }
 
 // MARK: - 修正置中的語音波形視圖
@@ -471,6 +473,7 @@ struct CompactChatView: View {
         messageText = ""
     }
 }
+
 
 // MARK: - Preview
 #Preview {

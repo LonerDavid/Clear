@@ -21,9 +21,6 @@ struct ImmersiveView: View {
                 // https://developer.apple.com/
             }
             
-            if let clearContentEntity = try? await Entity(named: "yellowheart", in: realityKitContentBundle) {
-                content.add(clearContentEntity)
-            }
         }
     }
 }
