@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 #if os(visionOS)
 import RealityKit
 import RealityKitContent
@@ -20,36 +21,41 @@ struct UpdatedLandingPageView: View {
 
     var body: some View {
         #if os(visionOS)
-        VStack(spacing: 24) {
+        VStack(spacing: 20) {
             DraggableYellowHeartView()
             Text("嗨，今天的你感覺如何？")
                 .font(.largeTitle)
             
             HStack(spacing: 12) {
-                TextField("輸入訊息...", text: $inputText, onCommit: {
-                    sendTextMessage()
-                })
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(
-                    Capsule()
-                        .fill(.thinMaterial)
-                )
-                .hoverEffect(.highlight)
+                TextField(text: $inputText) {
+                    HStack {
+                        Text("輸入你想說的話...")
+                    }
+                }
+                .textFieldStyle(CapsuleTextFieldStyle())
+                .padding(10)
+                .contentShape(.hoverEffect, .rect(cornerRadius: 20))
                 .frame(maxWidth: 300)
+                .onSubmit {
+                    sendTextMessage()
+                }
                 
-                Button(action: {
+                Button {
                     if chatManager.isListening {
                         chatManager.stopListening()
                     } else {
                         chatManager.startListening()
                     }
-                }) {
+                }label: {
                     Image(systemName: chatManager.isListening ? "mic.fill" : "mic")
-                        .font(.title2)
+                        .frame(height: 30)
+                        .padding(10)
+                        .background(Material.thick)
+                        .clipShape(Circle())
                         .foregroundStyle(chatManager.isListening ? .red : .primary)
                 }
                 .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
             }
             .padding(.horizontal)
             

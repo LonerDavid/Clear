@@ -58,6 +58,17 @@ def Xform "Root"
         over "SkySphere_mat"
         {
             asset inputs:SkySphere_Texture = @quality_restoration_20250619211051202.jpg@
+
+            over "UnlitSurface"
+            {
+                int ui:nodegraph:node:stackingOrder = 388
+            }
+        }
+
+        def RealityKitComponent "ImageBasedLight"
+        {
+            uniform token info:id = "RealityKit.ImageBasedLight"
+            bool isGlobalIBL = 0
         }
     }
 }

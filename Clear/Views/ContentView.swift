@@ -21,26 +21,27 @@ struct ContentView: View {
         #if os(visionOS)
         TabView {
             
-            ImmersiveTestView()
+            DraggableYellowHeartView()
+//            ImmersiveTestView()
                 .tabItem {
                     Label("測試用", systemImage: "hammer.fill")
                 }
                 .environmentObject(appState)
-                .frame(width: 800, height: 600)
+                .frame(minWidth: 900, minHeight: 450)
             
             UpdatedLandingPageView()
                 .tabItem {
                     Label("主頁", systemImage: "house")
                 }
                 .environmentObject(appState)
-                .frame(width: 800, height: 600)
+                .frame(minWidth: 900, minHeight: 450)
                 
             EmotionSelectionView()
                 .tabItem {
                     Label("療癒小語", systemImage: "heart.fill")
                 }
                 .environmentObject(appState)
-                .frame(width: 600, height: 500)
+                .frame(minWidth: 900, minHeight: 450)
             
 //            ImmersiveSpaceView()
 //                .tabItem {
@@ -53,21 +54,14 @@ struct ContentView: View {
                     Label("每日任務", systemImage: "heart.text.square")
                 }
                 .environmentObject(appState)
-                .frame(width: 1000, height: 800)
+                .frame(minWidth: 900, minHeight: 450)
             
             EmotionReportView()
                 .tabItem {
                     Label("情緒報告", systemImage: "list.clipboard.fill")
                 }
                 .environmentObject(appState)
-                .frame(width: 800, height: 600)
-            
-//            ImmersiveTestView()
-//                .tabItem {
-//                    Label("測試用", systemImage: "hammer.fill")
-//                }
-//                .environmentObject(appState)
-//                .frame(width: 800, height: 600)
+                .frame(minWidth: 900, minHeight: 450)
             
         }
         .preferredColorScheme(.dark)

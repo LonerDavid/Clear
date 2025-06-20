@@ -15,7 +15,8 @@
     "objectMetadataList" : [
       [
         "5D5A6117-4834-48EA-AA43-9ED90418E229",
-        "root"
+        "root",
+        "_materials"
       ],
       {
         "isExpanded" : true,
@@ -24,7 +25,15 @@
       [
         "5D5A6117-4834-48EA-AA43-9ED90418E229",
         "root",
-        "_materials"
+        "Mesh_0"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "5D5A6117-4834-48EA-AA43-9ED90418E229",
+        "root"
       ],
       {
         "isExpanded" : true,
@@ -70,6 +79,24 @@
       [
         "AF09ED6F-1707-48FD-8720-65B998362C09",
         "Root",
+        "SkySphere",
+        "SkySphere_mat"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "AF09ED6F-1707-48FD-8720-65B998362C09",
+        "Root"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "AF09ED6F-1707-48FD-8720-65B998362C09",
+        "Root",
         "Sphere_Right"
       ],
       {
@@ -80,14 +107,6 @@
         "AF09ED6F-1707-48FD-8720-65B998362C09",
         "Root",
         "Sphere_Left"
-      ],
-      {
-        "isExpanded" : true,
-        "isLocked" : false
-      },
-      [
-        "AF09ED6F-1707-48FD-8720-65B998362C09",
-        "Root"
       ],
       {
         "isExpanded" : true,
