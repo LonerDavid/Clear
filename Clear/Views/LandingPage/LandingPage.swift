@@ -11,7 +11,13 @@ import RealityKitContent
 // ✅ 主畫面
 struct UpdatedLandingPageView: View {
     @EnvironmentObject var appState: AppState
-    @StateObject private var chatManager = SimpleChatGPTManager()
+    @StateObject private var chatManager = SimpleChatGPTManager.shared
+    #if os(visionOS)
+    @Environment(AppModel.self) private var appModel
+    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(\.openWindow) private var openWindow
+    #endif
     @State private var isAnimating = false
     @State private var showWelcomeText = false
     @State private var showChatInterface = false
@@ -23,39 +29,36 @@ struct UpdatedLandingPageView: View {
         #if os(visionOS)
         VStack(spacing: 20) {
             DraggableYellowHeartView()
-            Text("嗨，今天的你感覺如何？")
+                .opacity(showAPISetup ? 0 : 1)
+                .animation(.easeInOut(duration: 0.3), value: showAPISetup)
+//            Text("嗨，今天的你感覺如何？")
+            Text(getGreetingText())
                 .font(.largeTitle)
             
             HStack(spacing: 12) {
-                TextField(text: $inputText) {
-                    HStack {
-                        Text("輸入你想說的話...")
+                if chatManager.hasValidAPIKey {
+                    Button {
+                        openWindow(id: MyWindowID.chatView)
+                    } label: {
+                        HStack {
+                            Image(systemName: "message.fill")
+                            Text("開始與 Clear 對話")
+                        }
+//                        .padding(.horizontal, 20)
+//                        .padding(.vertical, 12)
+//                        .background(Material.thick)
+//                        .clipShape(Capsule())
+                        .foregroundStyle(.primary)
                     }
-                }
-                .textFieldStyle(CapsuleTextFieldStyle())
-                .padding(10)
-                .contentShape(.hoverEffect, .rect(cornerRadius: 20))
-                .frame(maxWidth: 300)
-                .onSubmit {
-                    sendTextMessage()
+                    .buttonStyle(.bordered)
+                } else {
+                    Button {
+                        showAPISetup = true
+                    } label: {
+                        Text("設定 AI 功能，來跟Clear對話吧！")
+                    }
                 }
                 
-                Button {
-                    if chatManager.isListening {
-                        chatManager.stopListening()
-                    } else {
-                        chatManager.startListening()
-                    }
-                }label: {
-                    Image(systemName: chatManager.isListening ? "mic.fill" : "mic")
-                        .frame(height: 30)
-                        .padding(10)
-                        .background(Material.thick)
-                        .clipShape(Circle())
-                        .foregroundStyle(chatManager.isListening ? .red : .primary)
-                }
-                .buttonStyle(.borderless)
-                .buttonBorderShape(.circle)
             }
             .padding(.horizontal)
             
@@ -67,13 +70,26 @@ struct UpdatedLandingPageView: View {
                         .font(.caption)
                 }
                 .buttonStyle(.borderless)
+                
                 Button {
-                    //進入房間
+                    if appModel.currentImmersiveSpaceID == appModel.forestImmersiveSpaceID {
+                        Task {
+                            await dismissImmersiveSpace()
+                            _ = await openImmersiveSpace(id: appModel.immersiveSpaceID)
+                            appModel.currentImmersiveSpaceID = appModel.immersiveSpaceID
+                        }
+                    } else {
+                        Task {
+                            await dismissImmersiveSpace()
+                            _ = await openImmersiveSpace(id: appModel.forestImmersiveSpaceID)
+                            appModel.currentImmersiveSpaceID = appModel.forestImmersiveSpaceID
+                        }
+                    }
                 } label: {
                     HStack {
-                        Text("進入房間")
+                        Text(appModel.currentImmersiveSpaceID == appModel.forestImmersiveSpaceID ? "離開房間" : "進入房間")
                             .font(.caption)
-                        Image(systemName: "bubbles.and.sparkles.fill")
+                        Image(systemName: appModel.currentImmersiveSpaceID == appModel.forestImmersiveSpaceID ? "rectangle.portrait.and.arrow.right.fill" : "bubbles.and.sparkles.fill")
                     }
                 }
                 .buttonStyle(.borderless)
@@ -81,6 +97,16 @@ struct UpdatedLandingPageView: View {
         }
         .onAppear {
             AudioPlayerManager.shared.playBackgroundSound(named: "lake")
+        }
+        .sheet(isPresented: $showAPISetup) {
+            SimpleAPISetupView(chatManager: chatManager) {
+                showAPISetup = false
+            }
+        }
+        .onReceive(chatManager.$detectedEmotion) { newEmotion in
+            if let emotion = newEmotion {
+                updateAppStateFromEmotion(emotion)
+            }
         }
         #else
         GeometryReader { geometry in
@@ -351,135 +377,6 @@ struct SimpleVoiceWaveView: View {
         }
     }
 }
-
-// MARK: - 修正置中的緊湊型聊天視圖
-struct CompactChatView: View {
-    @ObservedObject var chatManager: SimpleChatGPTManager
-    let onClose: () -> Void
-    
-    @State private var messageText = ""
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            // 標題列 - 置中
-            HStack {
-                Text("💬 與 Clear 對話")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                
-                Spacer()
-                
-                Button("關閉") {
-                    onClose()
-                }
-                .buttonStyle(ClearButtonStyle(isPrimary: false))
-            }
-            .padding()
-            .background(.ultraThinMaterial)
-            .frame(maxWidth: .infinity) // 標題列置中
-            
-            // 聊天記錄 - 置中
-            ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(chatManager.conversationHistory) { message in
-                            ChatMessageBubble(message: message)
-                        }
-                        
-                        if chatManager.isProcessing {
-                            HStack {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                Text("Clear 正在思考...")
-                                    .foregroundStyle(.white)
-                                Spacer()
-                            }
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading) // 載入指示器左對齊
-                        }
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity) // 聊天記錄容器置中
-                }
-                .frame(maxHeight: 300)
-                .onChange(of: chatManager.conversationHistory.count) { _, _ in
-                    if let lastMessage = chatManager.conversationHistory.last {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            proxy.scrollTo(lastMessage.id, anchor: .bottom)
-                        }
-                    }
-                }
-            }
-            
-            // 情緒分析顯示 - 置中
-            if let emotion = chatManager.detectedEmotion {
-                EmotionDisplayCard(emotion: emotion)
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity) // 情緒分析卡片置中
-            }
-            
-            // 輸入區域 - 置中
-            VStack(spacing: 15) {
-                // 文字輸入
-                HStack {
-                    TextField("輸入訊息...", text: $messageText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    
-                    Button("發送") {
-                        sendMessage()
-                    }
-                    .buttonStyle(ClearButtonStyle(isPrimary: false))
-                    .disabled(messageText.isEmpty)
-                }
-                .frame(maxWidth: .infinity) // 輸入欄置中
-                
-                // 語音控制 - 置中
-                HStack(spacing: 20) {
-                    Button(action: {
-                        if chatManager.isListening {
-                            chatManager.stopListening()
-                        } else {
-                            chatManager.startListening()
-                        }
-                    }) {
-                        Image(systemName: chatManager.isListening ? "mic.fill" : "mic")
-                            .font(.system(size: 25))
-                            .foregroundStyle(chatManager.isListening ? .red : .white)
-                    }
-                    .buttonStyle(VoiceButtonStyle(isActive: chatManager.isListening))
-                    
-                    Button("清除對話") {
-                        chatManager.clearConversation()
-                    }
-                    .buttonStyle(ClearButtonStyle(isPrimary: false))
-                    .font(.caption)
-                }
-                .frame(maxWidth: .infinity) // 語音控制按鈕組置中
-                
-                if let error = chatManager.speechError ?? chatManager.apiError {
-                    Text(error)
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity) // 錯誤訊息置中
-                }
-            }
-            .padding()
-            .background(.ultraThinMaterial)
-            .frame(maxWidth: .infinity) // 整個輸入區域置中
-        }
-        .background(.black.opacity(0.7))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .frame(maxWidth: .infinity) // 整個對話框置中
-    }
-    
-    private func sendMessage() {
-        guard !messageText.isEmpty else { return }
-        chatManager.sendTextMessage(messageText)
-        messageText = ""
-    }
-}
-
 
 // MARK: - Preview
 #Preview {

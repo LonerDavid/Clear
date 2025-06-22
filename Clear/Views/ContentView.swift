@@ -27,21 +27,21 @@ struct ContentView: View {
                     Label("測試用", systemImage: "hammer.fill")
                 }
                 .environmentObject(appState)
-                .frame(minWidth: 900, minHeight: 450)
+                .frame(minWidth: 900, minHeight: 480)
             
             UpdatedLandingPageView()
                 .tabItem {
                     Label("主頁", systemImage: "house")
                 }
                 .environmentObject(appState)
-                .frame(minWidth: 900, minHeight: 450)
+                .frame(minWidth: 900, minHeight: 480)
                 
             EmotionSelectionView()
                 .tabItem {
                     Label("療癒小語", systemImage: "heart.fill")
                 }
                 .environmentObject(appState)
-                .frame(minWidth: 900, minHeight: 450)
+                .frame(minWidth: 900, minHeight: 480)
             
 //            ImmersiveSpaceView()
 //                .tabItem {
@@ -54,14 +54,14 @@ struct ContentView: View {
                     Label("每日任務", systemImage: "heart.text.square")
                 }
                 .environmentObject(appState)
-                .frame(minWidth: 900, minHeight: 450)
+                .frame(minWidth: 900, minHeight: 480)
             
             EmotionReportView()
                 .tabItem {
                     Label("情緒報告", systemImage: "list.clipboard.fill")
                 }
                 .environmentObject(appState)
-                .frame(minWidth: 900, minHeight: 450)
+                .frame(minWidth: 900, minHeight: 480)
             
         }
         .preferredColorScheme(.dark)
@@ -104,7 +104,12 @@ struct ContentView: View {
     #if os(visionOS)
     private func openImmersiveSpaceIfNeeded() async {
         if appModel.immersiveSpaceState == .closed {
-            _ = await openImmersiveSpace(id: appModel.immersiveSpaceID)
+            let result = await openImmersiveSpace(id: appModel.immersiveSpaceID)
+            if result != .opened {
+                // Retry once after a short delay if not opened
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                _ = await openImmersiveSpace(id: appModel.immersiveSpaceID)
+            }
         }
     }
     #endif

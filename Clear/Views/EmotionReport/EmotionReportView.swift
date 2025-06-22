@@ -84,6 +84,42 @@ struct EmotionReportView: View {
             }
             .padding(.horizontal, 20)
         }
+        .sheet(isPresented: $showAcuteExplanation) {
+            StressExplanationDialog(
+                title: "短期壓力怎麼算？",
+                explanation: """
+短期壓力反映你當下的壓力狀態，根據 HRV（心率變異性）計算。
+
+我們的公式是：
+(60 - HRV) × 2，並限制在 0～100。
+
+HRV 越低，代表壓力越高；HRV 越高，則代表自律神經系統穩定、壓力較低。
+
+舉例：若 HRV 平均為 45，短期壓力即為 (60-45)×2 = 30。
+
+HRV 數據來自 Apple Watch 並透過 HealthKit 提供，建議搭配深呼吸或冥想進行調節。
+""",
+                isPresented: $showAcuteExplanation
+            )
+        }
+        .sheet(isPresented: $showChronicExplanation) {
+            StressExplanationDialog(
+                title: "長期壓力怎麼算？",
+                explanation: """
+長期壓力代表你近一週的生活壓力累積情況，結合四個健康指標來評估：
+
+1. REM 睡眠時長（< 60 分 → 壓力偏高）
+2. 步行步數（< 3000 步 → 壓力偏高）
+3. 呼吸頻率（> 18 次/分 → 壓力偏高）
+4. 活動能量（< 250 kcal → 壓力偏高）
+
+每項指標給予一定權重後平均，最後換算為 0～100 的分數。
+
+舉例：如果你最近都缺乏運動、睡不好，分數會提高。這幫助你察覺壓力來源並及早調整。
+""",
+                isPresented: $showChronicExplanation
+            )
+        }
         
 #else
         ScrollView {
@@ -350,11 +386,13 @@ struct StressExplanationDialog: View {
             Button("我了解了") {
                 isPresented = false
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.bordered)
         }
         .padding()
         .frame(maxWidth: 500)
+        #if !os(visionOS)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+        #endif
         .padding()
     }
 }

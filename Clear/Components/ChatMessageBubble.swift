@@ -14,31 +14,33 @@ struct ChatMessageBubble: View {
                 VStack(alignment: .trailing, spacing: 5) {
                     Text(message.content)
                         .padding(12)
-                        .background(.blue.opacity(0.8))
-                        .foregroundStyle(.white)
+                        .background(.blue.opacity(0.5))
+                        .foregroundStyle(.primary)
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                     
                     Text(formatTime(message.timestamp))
                         .font(.caption2)
-                        .foregroundStyle(.gray)
+                        .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: 250, alignment: .trailing)
             } else {
                 VStack(alignment: .leading, spacing: 5) {
                     HStack(alignment: .top, spacing: 8) {
-                        Text("🤖")
+//                        Text("🤖")
+                        Image("clearchaticon")
                             .font(.title3)
+                        
                         
                         Text(message.content)
                             .padding(12)
-                            .background(.gray.opacity(0.3))
-                            .foregroundStyle(.white)
+                            .background(.gray.opacity(0.5))
+                            .foregroundStyle(.primary)
                             .clipShape(RoundedRectangle(cornerRadius: 15))
                     }
                     
                     Text(formatTime(message.timestamp))
                         .font(.caption2)
-                        .foregroundStyle(.gray)
+                        .foregroundStyle(.secondary)
                         .padding(.leading, 32)
                 }
                 .frame(maxWidth: 250, alignment: .leading)
