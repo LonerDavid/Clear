@@ -20,5 +20,5 @@ class AppModel {
         case open
     }
     var immersiveSpaceState = ImmersiveSpaceState.closed
+    var isMainWindowOpen: Bool = true
 }
-

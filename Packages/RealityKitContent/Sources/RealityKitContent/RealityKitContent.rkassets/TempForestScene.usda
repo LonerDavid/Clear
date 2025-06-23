@@ -10,7 +10,7 @@
 
 def Xform "Root"
 {
-    reorder nameChildren = ["SkySphere", "TestParticleEmitter"]
+    reorder nameChildren = ["SkySphere", "TestParticleEmitter", "PETest"]
     def "SkySphere" (
         active = true
         references = @SkySphere.usdz@
@@ -27,7 +27,8 @@ def Xform "Root"
 
     def Xform "TestParticleEmitter"
     {
-        float3 xformOp:translate = (0.5, 0.5, -0.5)
+        float3 xformOp:scale = (20, 20, 20)
+        float3 xformOp:translate = (1, 0, -1)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
 
         def RealityKitComponent "VFXEmitter"
@@ -154,6 +155,96 @@ def Xform "Root"
                 {
                 }
             }
+        }
+
+        def RealityKitComponent "HierarchicalFade"
+        {
+            uniform token info:id = "RealityKit.HierarchicalFade"
+            float opacity = 1
+        }
+    }
+
+    def RealityKitTimeline "PETest"
+    {
+        reorder nameChildren = ["Track3", "Track2", "Track"]
+        def RealityKitTrack "Track2"
+        {
+            reorder nameChildren = ["Hide", "Transform_By"]
+            def RealityKitAction "Transform_By"
+            {
+                string actionKind = "moveBy"
+                int blendLayer = 300
+                double duration = 1.5
+                uniform token info:id = "AFF10965-0F49-40F8-883C-5F3C3D355444"
+                float3 position = (0.5, 0.5, -0.5)
+                double startTime = 2.993767848559506
+                rel target = </Root/TestParticleEmitter>
+
+                def RealityKitStruct "timingFunction"
+                {
+                    token type = "easeInOut"
+                }
+            }
+        }
+
+        def RealityKitTrack "Track3"
+        {
+            reorder nameChildren = ["Enable_Entity", "Transform_By"]
+            def RealityKitAction "Enable_Entity"
+            {
+                string actionKind = "enable"
+                double duration = 0
+                uniform token info:id = "65A285D3-7F7B-40E1-B7AB-E5EEC7CF5F0E"
+                double startTime = 0
+                rel target = </Root/TestParticleEmitter>
+            }
+        }
+
+        def RealityKitTrack "Track"
+        {
+            def RealityKitAction "Hide"
+            {
+                string actionKind = "hide"
+                int blendLayer = 300
+                double duration = 1
+                uniform token info:id = "D25E6F1B-AF08-44C4-A3DD-CAD340C634B5"
+                double startTime = 3.2357626895685665
+                rel target = </Root/TestParticleEmitter>
+
+                def RealityKitStruct "timingFunction"
+                {
+                }
+            }
+        }
+    }
+
+    def RealityKitComponent "RCP_BehaviorsContainer"
+    {
+        rel behaviors = </Root/OnAddedToScene>
+        uniform token info:id = "RCP.BehaviorsContainer"
+    }
+
+    def Preliminary_Behavior "OnAddedToScene"
+    {
+        rel actions = </Root/OnAddedToScene/Action>
+        uniform bool exclusive
+        rel triggers = </Root/OnAddedToScene/Trigger>
+
+        def Preliminary_Trigger "Trigger"
+        {
+            rel affectedObjects = </Root>
+            token info:id = "SceneTransition"
+        }
+
+        def Preliminary_Action "Action"
+        {
+            rel affectedObjects = </Root>
+            rel animationLibraryKey = </Root/PETest>
+            rel animationLibraryKeyOverrideKey = </Root/OnAddedToScene/Trigger>
+            token info:id = "PlayTimeline"
+            int loops = 0
+            int performCount = 1
+            token type = "serial"
         }
     }
 }

@@ -39,6 +39,7 @@ struct UpdatedLandingPageView: View {
                 if chatManager.hasValidAPIKey {
                     Button {
                         openWindow(id: MyWindowID.chatView)
+                            
                     } label: {
                         HStack {
                             Image(systemName: "message.fill")

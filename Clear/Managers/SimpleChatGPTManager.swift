@@ -90,8 +90,8 @@ class SimpleChatGPTManager: NSObject, ObservableObject {
     private override init() {
         super.init()
         setupSpeech()
-        setupInitialGreeting()
         loadAPIKey()
+        setupInitialGreeting()
     }
     
     // MARK: - API Key 管理
@@ -109,12 +109,12 @@ class SimpleChatGPTManager: NSObject, ObservableObject {
     }
     
     private func loadAPIKey() {
+        
         if let savedKey = UserDefaults.standard.string(forKey: "openai_api_key") {
             apiKey = savedKey
             let valid = !savedKey.isEmpty && savedKey.hasPrefix("sk-")
-            DispatchQueue.main.async {
-                self.hasValidAPIKey = valid
-            }
+            self.hasValidAPIKey = valid
+            
         }
     }
     
@@ -556,6 +556,10 @@ class SimpleChatGPTManager: NSObject, ObservableObject {
         
         let confidence = Int(emotion.confidence * 100)
         return "根據 AI 分析，你現在\(emotion.emotionType)，壓力程度是\(emotion.stressCategory) (置信度 \(confidence)%)"
+    }
+    
+    func performInitialAPIKeyCheck() {
+        loadAPIKey()
     }
 }
 

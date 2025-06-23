@@ -9,18 +9,29 @@ import SwiftUI
 struct CompactChatView: View {
     @ObservedObject var chatManager: SimpleChatGPTManager
     let onClose: () -> Void
-    
+    @Environment(AppModel.self) var appModel
     @State private var messageText = ""
+    @Environment(\.openWindow) private var openWindow
+    @Environment(\.dismissWindow) private var dismissWindow
     
     var body: some View {
         VStack(spacing: 0) {
             // 標題列 - 置中
             #if os(visionOS)
-            HStack(alignment: .center) {
+            HStack {
                 Text("💬 與 Clear 對話")
                     .padding(.horizontal, 8)
                     .font(.headline)
                     .foregroundStyle(.primary)
+                Spacer()
+                Button {
+                    if !appModel.isMainWindowOpen {
+                        openWindow(id: MyWindowID.mainWindow)
+                    }
+                    dismissWindow(id: MyWindowID.chatView)
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
             }
             .padding()
             .frame(maxWidth: .infinity)

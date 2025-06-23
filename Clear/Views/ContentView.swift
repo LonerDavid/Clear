@@ -20,7 +20,6 @@ struct ContentView: View {
     var body: some View {
         #if os(visionOS)
         TabView {
-            
             DraggableYellowHeartView()
 //            ImmersiveTestView()
                 .tabItem {
@@ -43,12 +42,6 @@ struct ContentView: View {
                 .environmentObject(appState)
                 .frame(minWidth: 900, minHeight: 480)
             
-//            ImmersiveSpaceView()
-//                .tabItem {
-//                    Label("沉浸", systemImage: "sparkles")
-//                }
-//                .environmentObject(appState)
-            
             DailyTaskView()
                 .tabItem {
                     Label("每日任務", systemImage: "heart.text.square")
@@ -66,11 +59,7 @@ struct ContentView: View {
         }
         .preferredColorScheme(.dark)
         .environmentObject(appState)
-        .onAppear {
-            Task {
-                await openImmersiveSpaceIfNeeded()
-            }
-        }
+
         
         #else
         NavigationStack {
@@ -100,19 +89,6 @@ struct ContentView: View {
         .environmentObject(appState)
         #endif
     }
-    
-    #if os(visionOS)
-    private func openImmersiveSpaceIfNeeded() async {
-        if appModel.immersiveSpaceState == .closed {
-            let result = await openImmersiveSpace(id: appModel.immersiveSpaceID)
-            if result != .opened {
-                // Retry once after a short delay if not opened
-                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-                _ = await openImmersiveSpace(id: appModel.immersiveSpaceID)
-            }
-        }
-    }
-    #endif
 }
 
 #Preview {
