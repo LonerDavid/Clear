@@ -5,10 +5,12 @@
     "\/RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Scene.usda" : "0A9B4653-B11E-4D6A-850E-C6FCB621626C",
     "\/RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Untitled Scene.usda" : "D560BB77-AAF3-4BDE-B7C4-989332A4688B",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/ClearForest.usda" : "EA5D5E2C-A943-41EB-9DAD-E0BD5B57D6E1",
+    "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/ForestScene.usda" : "6447A501-6A6E-43D9-8D3D-998B43B5B0CF",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/GridMaterial.usda" : "66168B71-AB05-424E-8B6C-D33D6E61B08F",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Immersive.usda" : "AF09ED6F-1707-48FD-8720-65B998362C09",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Scene 1.usda" : "2C10249D-A74C-427F-8C16-3182AE8AE9A9",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Scene.usda" : "D66134B1-3681-4A8E-AFE5-29F257229F3B",
+    "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/TempForestScene.usda" : "7C763EB2-CF85-4D19-AF8B-E03EC4BCEA69",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Untitled%20Scene.usda" : "87F80D69-77C4-4BBF-93AD-83D0288A18D4",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/yellowheart.usdc" : "5D5A6117-4834-48EA-AA43-9ED90418E229"
   },
@@ -16,6 +18,8 @@
   "uuidToIntID" : {
     "2C10249D-A74C-427F-8C16-3182AE8AE9A9" : -8408231803547525277,
     "5D5A6117-4834-48EA-AA43-9ED90418E229" : 5669803073545747179,
+    "6447A501-6A6E-43D9-8D3D-998B43B5B0CF" : 425130312617825299,
+    "7C763EB2-CF85-4D19-AF8B-E03EC4BCEA69" : 4720088915837551574,
     "87F80D69-77C4-4BBF-93AD-83D0288A18D4" : -2759923559632376148,
     "AF09ED6F-1707-48FD-8720-65B998362C09" : -355088730842487032,
     "D66134B1-3681-4A8E-AFE5-29F257229F3B" : -7502950284454302653,

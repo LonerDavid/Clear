@@ -10,34 +10,73 @@ import RealityKitContent
 
 #if os(visionOS)
 struct DraggableYellowHeartView: View {
-    @State private var position: SIMD3<Float> = [0, 0, 0]
-    @State private var isDragging = false
+    @GestureState private var clearInitialTransform: EntityTransformState?
+    let clearPosition = Entity()
+    @State private var initialPosition: SIMD3<Float>? = nil
+    @State private var initialOrientation: simd_quatf? = nil
+    @State private var currentRotation: simd_quatf = simd_quatf(angle: 0, axis: [0, 1, 0])
+    
     var body: some View {
         RealityView { content in
-            if let entity = try? await Entity(named: "yellowheart", in: realityKitContentBundle) {
-                entity.position.z -= 10
-                entity.position = position
-                entity.scale *= 0.1
-                
-                content.add(entity)
+            guard let clearScene = try? await Entity(named: "yellowheart", in: realityKitContentBundle) else {
+                print("找不到Clear模型!!!")
+                return
             }
-        } update: { content in
-            if let entity = content.entities.first {
-                entity.position = position
+//            clearScene.scale *= 0.1
+            clearPosition.addChild(clearScene)
+            clearPosition.position.z -= 0.15
+            content.add(clearPosition)
+            // Store initial transform only once
+            if initialPosition == nil && initialOrientation == nil {
+                initialPosition = clearPosition.position
+                initialOrientation = clearPosition.orientation
+                currentRotation = clearPosition.orientation
             }
         }
-        .frame(height: 180)
-        .gesture(DragGesture(minimumDistance: 0)
-            .onChanged { value in
-                isDragging = true
-                // Map drag to x/y in 3D space (simple mapping for demo)
-                position.x += Float(value.translation.width) * 0.002
-                position.y -= Float(value.translation.height) * 0.002
-            }
-            .onEnded { _ in
-                isDragging = false
-            }
-        )
+        .frame(maxWidth: 250, maxHeight: 250)
+        .gesture(dragToRotateGesture)
     }
+    
+    var dragToRotateGesture: some Gesture {
+        DragGesture()
+            .targetedToEntity(clearPosition)
+            .onChanged { value in
+//                guard let initialOrientation = initialOrientation else { return }
+                // Map drag x to y-axis rotation, drag y to x-axis rotation
+                let sensitivity: Float = 0.01
+                let deltaX = Float(value.translation.width) * sensitivity
+                let deltaY = Float(value.translation.height) * sensitivity
+                // Compose rotations: Y (up) and X (right)
+                let rotationY = simd_quatf(angle: deltaX, axis: [0, 1, 0])
+                let rotationX = simd_quatf(angle: deltaY, axis: [1, 0, 0])
+                let newRotation = rotationY * rotationX * currentRotation
+                clearPosition.orientation = newRotation
+            }
+            .onEnded { value in
+                // Save the new rotation as the current rotation
+                let sensitivity: Float = 0.01
+                let deltaX = Float(value.translation.width) * sensitivity
+                let deltaY = Float(value.translation.height) * sensitivity
+                let rotationY = simd_quatf(angle: deltaX, axis: [0, 1, 0])
+                let rotationX = simd_quatf(angle: deltaY, axis: [1, 0, 0])
+                currentRotation = rotationY * rotationX * currentRotation
+                // Reset to initial position and orientation
+                // if let initialPosition = initialPosition, let initialOrientation = self.initialOrientation {
+                //     clearPosition.position = initialPosition
+                //     clearPosition.orientation = initialOrientation
+                //     currentRotation = initialOrientation
+                // }
+            }
+    }
+}
+
+struct EntityTransformState {
+    let orientation: simd_quatf
+    let position: SIMD3<Float>
+}
+
+#Preview(immersionStyle: .mixed) {
+    DraggableYellowHeartView()
+        .environment(AppModel())
 }
 #endif

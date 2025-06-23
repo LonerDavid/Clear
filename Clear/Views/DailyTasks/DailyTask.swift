@@ -21,6 +21,8 @@ struct TaskCard: View {
     @State private var isPressed = false
     @State private var isCompleted = false
     @State private var showDetail = false
+    @State private var showSheet = false
+
     
     var body: some View {
         #if os(visionOS)
@@ -183,6 +185,10 @@ struct TaskCard: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 isPressed = false
             }
+            showSheet = true
+        }
+        .sheet(isPresented: $showSheet) {
+            TaskDetailSheet(task: task)
         }
         #endif
     }
@@ -223,5 +229,46 @@ struct TaskActionButtonStyle: ButtonStyle {
             )
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .animation(.spring(response: 0.2), value: configuration.isPressed)
+    }
+}
+
+struct TaskDetailSheet: View {
+    let task: DailyTask
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        VStack(spacing: 24) {
+            Text(task.title)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .padding(.top, -16)
+
+            Text(taskDetailDescription(for: task.title))
+                .font(.body)
+                .multilineTextAlignment(.leading)
+                .padding(.horizontal, 24)
+
+//            Spacer()
+            Button(action: { dismiss() }) {
+                Text("我了解了")
+                    .foregroundStyle(.primary)
+                    .padding(8)
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .frame(minWidth: 350, minHeight: 300)
+        .padding(.bottom, 20)
+    }
+
+    private func taskDetailDescription(for title: String) -> String {
+        switch title {
+        case "冥想":
+            return "專注當下，閉上眼睛，隨著呼吸節奏緩慢地放鬆身心。3 分鐘的靜心練習，幫助你從忙碌中抽離，找回平靜的自己。"
+        case "時空膠囊":
+            return "完成一個時空膠囊：寫下一段話、畫一張圖，或存下一張有意義的照片，封存在 Clear 的時空膠囊中。這是給未來自己的訊息，也是一份情緒成長的紀錄。"
+        case "聽音樂":
+            return "播放一段療癒旋律，只要 30 秒，讓耳朵放鬆、心緒沉澱。無論你在哪個情緒階段，聲音都能成為安撫自己的力量。"
+        default:
+            return task.description
+        }
     }
 }

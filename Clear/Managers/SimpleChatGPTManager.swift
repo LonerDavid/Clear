@@ -66,6 +66,8 @@ struct EmotionAnalysis: Codable {
 
 // MARK: - SimpleChatGPTManager (修正版)
 class SimpleChatGPTManager: NSObject, ObservableObject {
+    static let shared = SimpleChatGPTManager()
+    
     @Published var isListening = false
     @Published var isProcessing = false
     @Published var currentResponse = ""
@@ -85,7 +87,7 @@ class SimpleChatGPTManager: NSObject, ObservableObject {
     private var apiKey: String = "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"
     private let apiURL = "https://api.openai.com/v1/chat/completions"
     
-    override init() {
+    private override init() {
         super.init()
         setupSpeech()
         setupInitialGreeting()
@@ -109,7 +111,10 @@ class SimpleChatGPTManager: NSObject, ObservableObject {
     private func loadAPIKey() {
         if let savedKey = UserDefaults.standard.string(forKey: "openai_api_key") {
             apiKey = savedKey
-            hasValidAPIKey = !savedKey.isEmpty && savedKey.hasPrefix("sk-")
+            let valid = !savedKey.isEmpty && savedKey.hasPrefix("sk-")
+            DispatchQueue.main.async {
+                self.hasValidAPIKey = valid
+            }
         }
     }
     
@@ -553,3 +558,4 @@ class SimpleChatGPTManager: NSObject, ObservableObject {
         return "根據 AI 分析，你現在\(emotion.emotionType)，壓力程度是\(emotion.stressCategory) (置信度 \(confidence)%)"
     }
 }
+

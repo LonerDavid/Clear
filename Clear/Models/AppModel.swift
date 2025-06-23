@@ -13,6 +13,7 @@ import SwiftUI
 class AppModel {
     let immersiveSpaceID = "ImmersiveSpace"
     let forestImmersiveSpaceID = "ForestImmersiveSpace"
+    var currentImmersiveSpaceID: String? = nil
     enum ImmersiveSpaceState {
         case closed
         case inTransition
@@ -20,3 +21,4 @@ class AppModel {
     }
     var immersiveSpaceState = ImmersiveSpaceState.closed
 }
+

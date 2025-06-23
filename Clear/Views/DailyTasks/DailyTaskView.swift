@@ -10,6 +10,7 @@ import SwiftUI
 struct DailyTaskView: View {
     @EnvironmentObject var appState: AppState
     @State private var showTasks = false
+    @State private var selectedTask: DailyTask? = nil
     
     private let tasks = [
         DailyTask(
@@ -45,23 +46,33 @@ struct DailyTaskView: View {
     ]
     
     var body: some View {
-        #if os(visionOS)
-        VStack(spacing: 0) {
+#if os(visionOS)
+        VStack {
             Text("每日任務卡")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-                .padding(.top, 20)
-            
-            LazyHGrid(rows: [GridItem(.flexible())]
-            ) {
-                ForEach(Array(tasks.enumerated()), id: \.element.id) {
-                    index, task in
-                    TaskCard(task: task)
+                .padding(.top, 24)
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHGrid(rows: [GridItem(.flexible())]) {
+                    ForEach(Array(tasks.enumerated()), id: \.element.id) { index, task in
+                        Button {
+                            selectedTask = task
+                        } label: {
+                            TaskCard(task: task)
+                        }
+                        .buttonStyle(.plain)
+                        .buttonBorderShape(.roundedRectangle(radius: 20))
+                    }
                 }
+                .padding(.horizontal, 32)
             }
+            .frame(minHeight: 400)
+        }
+        .sheet(item: $selectedTask) { task in
+            TaskDetailSheet(task: task)
         }
         
-        #else
+#else
         ScrollView {
             VStack(spacing: 0) {
                 Text("每日任務卡")
@@ -71,7 +82,7 @@ struct DailyTaskView: View {
                     .opacity(showTasks ? 1 : 0)
                     .offset(y: showTasks ? 0 : -20)
                     .animation(.spring(response: 0.8).delay(0.2), value: showTasks)
-            
+                
                 
                 LazyVGrid(columns: [GridItem(.flexible())], spacing: 20) {
                     ForEach(Array(tasks.enumerated()), id: \.element.id) { index, task in
@@ -103,7 +114,7 @@ struct DailyTaskView: View {
                 showTasks = true
             }
         }
-        #endif
+#endif
     }
 }
 
