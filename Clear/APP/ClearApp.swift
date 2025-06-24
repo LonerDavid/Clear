@@ -6,11 +6,12 @@ import PhotosUI
 @main
 struct ClearApp: App {
     @StateObject private var healthManager = HealthManager()
-//    @State private var appModel = AppModel()
     @State private var appModel = AppModel()
+    #if os(visionOS)
     @State private var immersionStyle: ImmersionStyle = .progressive(0.0...1.0, initialAmount: 0.5)
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
-
+    #endif
+    
     var body: some Scene {
         WindowGroup(id: MyWindowID.mainWindow) {
             ContentView()
