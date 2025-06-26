@@ -6,28 +6,28 @@
 	<string>晴境會發送療癒提醒和每日任務通知，幫助您保持心理健康</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
+		<key>UIApplicationPreferredDefaultSceneSessionRole</key>
+		<string>UIWindowSceneSessionRoleApplication</string>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
 		<key>UISceneConfigurations</key>
 		<dict>
 			<key>UISceneSessionRoleImmersiveSpaceApplication</key>
 			<array>
 				<dict>
-					<key>UISceneInitialImmersionStyle</key>
-					<string>UIImmersionStyleProgressive</string>
 					<key>UISceneClassName</key>
-					<string></string>
-					<key>UISceneDelegateClassName</key>
 					<string></string>
 					<key>UISceneConfigurationName</key>
 					<string></string>
+					<key>UISceneDelegateClassName</key>
+					<string></string>
+					<key>UISceneInitialImmersionStyle</key>
+					<string>UIImmersionStyleProgressive</string>
 					<key>UISceneStoryboardFile</key>
 					<string></string>
 				</dict>
 			</array>
 		</dict>
-		<key>UIApplicationPreferredDefaultSceneSessionRole</key>
-		<string>UIWindowSceneSessionRoleApplication</string>
-		<key>UIApplicationSupportsMultipleScenes</key>
-		<true/>
 	</dict>
 </dict>
 </plist>

@@ -9,9 +9,10 @@ struct ClearApp: App {
     @State private var appModel = AppModel()
     #if os(visionOS)
     @State private var immersionStyle: ImmersionStyle = .progressive(0.0...1.0, initialAmount: 0.5)
-    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(.openImmersiveSpace) private var openImmersiveSpace
     #endif
-    
+    @StateObject private var photoManager = PhotoManager() // ✅ 新增這個
+
     var body: some Scene {
         WindowGroup(id: MyWindowID.mainWindow) {
             ContentView()
@@ -22,9 +23,11 @@ struct ClearApp: App {
                 }
                 .onAppear {
                     appModel.isMainWindowOpen = true
+                    #if os(visionOS)
                     Task {
                         await openImmersiveSpaceIfNeeded()
                     }
+                    #endif
                 }
                 .onDisappear {
                     appModel.isMainWindowOpen = false
@@ -32,9 +35,9 @@ struct ClearApp: App {
         }
         .windowResizability(.contentMinSize)
         .defaultSize(width: 900, height: 480)
-        
+
         #if os(visionOS)
-        
+
         WindowGroup(id: MyWindowID.chatView) {
             CompactChatView(chatManager: SimpleChatGPTManager.shared) {
                 // Close window action - this will be handled by the window system
@@ -51,7 +54,7 @@ struct ClearApp: App {
                 WindowPlacement()
             }
         }
-        
+
         ImmersiveSpace(id: appModel.immersiveSpaceID) {
             ImmersiveView()
                 .environment(appModel)
@@ -63,10 +66,11 @@ struct ClearApp: App {
                 }
         }
         .immersionStyle(selection: .constant(.progressive), in: .progressive)
-        
+
         ImmersiveSpace(id: appModel.forestImmersiveSpaceID) {
             ForestImmersiveView()
                 .environment(appModel)
+                .environmentObject(photoManager) // ✅ 這裡是關鍵，請加這行
                 .onAppear {
                     appModel.immersiveSpaceState = .open
                 }
@@ -77,7 +81,7 @@ struct ClearApp: App {
         .immersionStyle(selection: .constant(.full), in: .full)
         #endif
     }
-    
+
     #if os(visionOS)
     private func openImmersiveSpaceIfNeeded() async {
         print("Attempting to open immersive space...")
