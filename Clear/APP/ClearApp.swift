@@ -7,11 +7,12 @@ import PhotosUI
 struct ClearApp: App {
     @StateObject private var healthManager = HealthManager()
     @State private var appModel = AppModel()
+    @StateObject private var photoManager = PhotoManager()
+
     #if os(visionOS)
     @State private var immersionStyle: ImmersionStyle = .progressive(0.0...1.0, initialAmount: 0.5)
-    @Environment(.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     #endif
-    @StateObject private var photoManager = PhotoManager() // ✅ 新增這個
 
     var body: some Scene {
         WindowGroup(id: MyWindowID.mainWindow) {
@@ -39,11 +40,9 @@ struct ClearApp: App {
         #if os(visionOS)
 
         WindowGroup(id: MyWindowID.chatView) {
-            CompactChatView(chatManager: SimpleChatGPTManager.shared) {
-                // Close window action - this will be handled by the window system
-            }
-            .environmentObject(healthManager)
-            .environment(appModel)
+            CompactChatView(chatManager: SimpleChatGPTManager.shared) {}
+                .environmentObject(healthManager)
+                .environment(appModel)
         }
         .windowResizability(.contentMinSize)
         .defaultSize(width: 450, height: 480)
@@ -68,9 +67,9 @@ struct ClearApp: App {
         .immersionStyle(selection: .constant(.progressive), in: .progressive)
 
         ImmersiveSpace(id: appModel.forestImmersiveSpaceID) {
-            ForestImmersiveView()
+            ImmersiveSpaceView()
                 .environment(appModel)
-                .environmentObject(photoManager) // ✅ 這裡是關鍵，請加這行
+                .environmentObject(photoManager)
                 .onAppear {
                     appModel.immersiveSpaceState = .open
                 }
@@ -88,13 +87,7 @@ struct ClearApp: App {
         if appModel.immersiveSpaceState == .closed {
             let result = await openImmersiveSpace(id: appModel.immersiveSpaceID)
             print("First attempt result: \(result)")
-            if result != .opened {
-                try? await Task.sleep(nanoseconds: 500_000_000)
-                let retryResult = await openImmersiveSpace(id: appModel.immersiveSpaceID)
-                print("Retry result: \(retryResult)")
-            }
-        }
-        else {
+        } else {
             print("他還是開的...")
         }
     }

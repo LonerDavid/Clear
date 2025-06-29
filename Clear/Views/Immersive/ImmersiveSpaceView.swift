@@ -1,23 +1,20 @@
+// ImmersiveSpaceView 修改
 import SwiftUI
 import Photos
-import HealthKit
-import UserNotifications
 
-
-// MARK: - ImmersiveSpaceView 重構
 struct ImmersiveSpaceView: View {
     @EnvironmentObject var appState: AppState
-    @StateObject private var photoManager = PhotoManager()
+    @EnvironmentObject var photoManager: PhotoManager
     @State private var cloudOpacity: Double = 0.9
     @State private var dispersedClouds: Set<Int> = []
     @State private var revealedPhotos: [CloudPhoto] = []
-    @State private var usedImages: Set<UIImage> = []
+    @State private var usedImages: Set<CGImage> = []
     @State private var showClearBackground = false
     @State private var showEmotionReportButton = false
 
     struct CloudPhoto: Identifiable {
         let id = UUID()
-        let image: UIImage?
+        let image: CGImage
         let emoji: String
         let position: CGPoint
         let isUserPhoto: Bool
@@ -44,17 +41,8 @@ struct ImmersiveSpaceView: View {
                 .zIndex(1)
 
                 ForEach(revealedPhotos) { photo in
-                    if photo.isUserPhoto, let image = photo.image {
-                        UserPhotoMemoryView(image: image, position: photo.position)
-                            .zIndex(2)
-                    } else {
-                        Text(photo.emoji)
-                            .font(.system(size: 50))
-                            .padding()
-                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
-                            .position(photo.position)
-                            .zIndex(2)
-                    }
+                    UserPhotoMemoryView(image: UIImage(cgImage: photo.image), position: photo.position)
+                        .zIndex(2)
                 }
 
                 VStack {
@@ -93,12 +81,12 @@ struct ImmersiveSpaceView: View {
                 y: CGFloat.random(in: 150...size.height - 150)
             )
 
-            let availablePhotos = photoManager.getPhotosForEmotion(appState.currentEmotion).filter { !usedImages.contains($0) }
+            let availablePhotos = photoManager.userPhotos.filter { !usedImages.contains($0) }
 
             if let photo = availablePhotos.randomElement() {
                 usedImages.insert(photo)
                 revealedPhotos.append(CloudPhoto(image: photo, emoji: "", position: position, isUserPhoto: true))
-            } 
+            }
 
             if dispersedClouds.count >= 5 && !showClearBackground {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
@@ -118,5 +106,7 @@ struct ImmersiveSpaceView: View {
 }
 
 #Preview {
-    ImmersiveSpaceView().environmentObject(AppState())
+    ImmersiveSpaceView()
+        .environmentObject(AppState())
+        .environmentObject(PhotoManager())
 }
