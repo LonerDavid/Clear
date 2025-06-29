@@ -82,7 +82,7 @@ struct ForestImmersiveView: View {
             if allPEDisappeared {
                 if !photoManager.hasPermission {
                     ProgressView("請授權相簿權限...")
-                } else if photoManager.isLoadingPhotos {
+                } else if photoManager.isLoadingPhotos   {
                     ProgressView("載入回憶照片中...")
                 } else if photoManager.userPhotos.isEmpty {
                     ProgressView("載入回憶照片中...")

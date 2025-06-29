@@ -20,13 +20,13 @@ struct ContentView: View {
     var body: some View {
         #if os(visionOS)
         TabView {
-            DraggableYellowHeartView()
-//            ImmersiveTestView()
-                .tabItem {
-                    Label("測試用", systemImage: "hammer.fill")
-                }
-                .environmentObject(appState)
-                .frame(minWidth: 900, minHeight: 480)
+//            DraggableYellowHeartView()
+////            ImmersiveTestView()
+//                .tabItem {
+//                    Label("測試用", systemImage: "hammer.fill")
+//                }
+//                .environmentObject(appState)
+//                .frame(minWidth: 900, minHeight: 480)
             
             UpdatedLandingPageView()
                 .tabItem {

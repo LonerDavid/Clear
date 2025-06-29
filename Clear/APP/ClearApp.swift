@@ -18,6 +18,7 @@ struct ClearApp: App {
         WindowGroup(id: MyWindowID.mainWindow) {
             ContentView()
                 .environmentObject(healthManager)
+                .environmentObject(photoManager)
                 .environment(appModel)
                 .onGeometryChange(for: CGSize.self, of: \.size) { newValue in
                     print("視窗寬： \(newValue.width) 高：\(newValue.height)")
