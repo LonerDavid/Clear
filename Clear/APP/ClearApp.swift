@@ -1,4 +1,4 @@
-// MARK: - Main App File
+// Main App File
 import SwiftUI
 import Photos
 import PhotosUI
@@ -10,7 +10,6 @@ struct ClearApp: App {
     @StateObject private var photoManager = PhotoManager()
 
     #if os(visionOS)
-    @State private var immersionStyle: ImmersionStyle = .progressive(0.0...1.0, initialAmount: 0.5)
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     #endif
 
@@ -39,7 +38,6 @@ struct ClearApp: App {
         .defaultSize(width: 900, height: 480)
 
         #if os(visionOS)
-
         WindowGroup(id: MyWindowID.chatView) {
             CompactChatView(chatManager: SimpleChatGPTManager.shared) {}
                 .environmentObject(healthManager)
@@ -56,8 +54,9 @@ struct ClearApp: App {
         }
 
         ImmersiveSpace(id: appModel.immersiveSpaceID) {
-            ImmersiveView()
+            ImmersiveView() // ✅ 換成你預期的畫面
                 .environment(appModel)
+                .environmentObject(photoManager)
                 .onAppear {
                     appModel.immersiveSpaceState = .open
                 }
@@ -65,10 +64,11 @@ struct ClearApp: App {
                     appModel.immersiveSpaceState = .closed
                 }
         }
+
         .immersionStyle(selection: .constant(.progressive), in: .progressive)
 
         ImmersiveSpace(id: appModel.forestImmersiveSpaceID) {
-            ImmersiveSpaceView()
+            ForestImmersiveView()
                 .environment(appModel)
                 .environmentObject(photoManager)
                 .onAppear {
@@ -87,14 +87,17 @@ struct ClearApp: App {
         print("Attempting to open immersive space...")
         if appModel.immersiveSpaceState == .closed {
             let result = await openImmersiveSpace(id: appModel.immersiveSpaceID)
+            appModel.currentImmersiveSpaceID = appModel.immersiveSpaceID
             print("First attempt result: \(result)")
         } else {
-            print("他還是開的...")
+            print("Immersive space is already open.")
         }
     }
     #endif
 }
 
+
+// MyWindowID.swift
 enum MyWindowID {
     static let mainWindow = "mainWindow"
     static let chatView = "chatView"
